@@ -1,0 +1,35 @@
+version: '2'
+services:
+    server:
+        ports:
+            - "80:80"
+            - "443:443"
+        build:
+            context: /environments/siteblank/images/
+            dockerfile: "phpsb"
+        links:
+            - mariadb
+        networks:
+            testing_net:
+                ipv4_address: 172.28.1.1
+        volumes:
+            - /environments/siteblank/www:/var/www
+            - /environments/siteblank/apache2/sites-available:/etc/apache2/sites-available
+    mariadb:
+        image: mariadb:latest
+        ports:
+            - "3306:3306"
+        volumes:
+            - /environments/siteblank/mysql:/var/lib/mysql
+            - /environments/siteblank/dump.sql:/home/dump.sql
+        environment:
+            MYSQL_ROOT_PASSWORD: 1
+        networks:
+            testing_net:
+                ipv4_address: 172.28.1.2
+networks:
+    testing_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.28.0.0/16
