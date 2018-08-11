@@ -1,27 +1,29 @@
-version: '2'
+version: '3.1'
 services:
     server:
         ports:
             - "80:80"
             - "443:443"
         build:
-            context: /environments/siteblank/images/
+            context: /enviroments/devshop/images/
             dockerfile: "phpsb"
         links:
-            - mariadb
+            - mysql
         networks:
             testing_net:
                 ipv4_address: 172.28.1.1
         volumes:
-            - /environments/siteblank/www:/var/www
-            - /environments/siteblank/apache2/sites-available:/etc/apache2/sites-available
-    mariadb:
-        image: mariadb:latest
+            - /enviroments/devshop/www:/var/www
+            - /enviroments/devshop/apache2/sites-available:/etc/apache2/sites-available
+    mysql:
+        image: mysql:8.0.12
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
         ports:
             - "3306:3306"
         volumes:
-            - /environments/siteblank/mysql:/var/lib/mysql
-            - /environments/siteblank/dump.sql:/home/dump.sql
+            - /enviroments/devshop/mysql:/var/lib/mysql
+            - /enviroments/devshop/dump.sql:/home/dump.sql
         environment:
             MYSQL_ROOT_PASSWORD: 1
         networks:
